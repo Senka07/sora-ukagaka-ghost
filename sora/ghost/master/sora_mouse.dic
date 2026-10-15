@@ -1,0 +1,77 @@
+//******************************************************************************
+// Sora - mouse reactions
+// Hit areas defined by the shell: head, face, bust
+//******************************************************************************
+
+//------------------------------------------------------------------------------
+// Double-click: reacts on her hit areas, opens the menu anywhere else
+// Reference3 = scope (0 = Sora), Reference4 = hit area
+//------------------------------------------------------------------------------
+OnMouseDoubleClick
+{
+	if reference[3] != 0 {
+		return
+	}
+	case reference[4] {
+		when 'head' {
+			SoraPokeHead()
+		}
+		when 'bust' {
+			SoraPokeBust()
+		}
+		when 'face' {
+			SoraPokeMouth()
+		}
+		others {
+			OnSoraMenu()
+		}
+	}
+}
+
+SoraPokeHead : nonoverlap
+{
+	"\0\s[9]Ah!\w5 \s[1]Y-yes?\w8\n\s[9]Did you need something?"
+	"\0\s[2]Eh?\w8 \s[3]Oh,\w5 it's just you...\w5 \s[8]you startled me."
+	"\0\s[6]Mm...\w8 \s[1]that tickles a little."
+}
+
+SoraPokeBust : nonoverlap
+{
+	"\0\s[2]H-hey!\w5 \s[11]W-what are you doing?!\w8\n\s[9]...P-please don't do that."
+	"\0\s[11]...!\w9\n\s[9]That's... \w5that's not okay!\w8\n\s[11]I-I'm going to pretend that didn't happen."
+	"\0\s[7]...\w9\s[9]You're terrible.\w8\n\s[1]...Just a little."
+}
+
+SoraPokeMouth : nonoverlap
+{
+	"\0\s[9]Mmph!\w5 \s[1]W-why did you do that?"
+	"\0\s[3]A-are you trying to make me stop talking?\w8\n\s[3]...I'll be quiet,\w5 then."
+}
+
+//------------------------------------------------------------------------------
+// Petting: count mouse movement over her head, react after a while
+//------------------------------------------------------------------------------
+OnMouseMove
+{
+	if reference[3] != 0 || !SHIORI3FW.CanTalk() {
+		return
+	}
+	_part = reference[4]
+	if _part != 'head' {
+		sora.petcount = 0
+		return
+	}
+	sora.petcount = TOINT(sora.petcount) + 1
+	if sora.petcount >= 40 {
+		sora.petcount = 0
+		SoraPetted()
+	}
+}
+
+SoraPetted : nonoverlap
+{
+	"\0\s[9]Ah...\w5 \s[6]you're...\w5 \s[6]patting my head?\w8\n\s[5]...I don't mind.\w5 Keep going,\w5 if you want."
+	"\0\s[6]Mm...\w8\n\s[6]This is nice...\w8 \s[1]D-don't tell anyone I said that."
+	"\0\s[1]...\w9\s[6]I could get used to this."
+	"\0\s[1]Y-you really like doing that,\w5 huh?\w8\n\s[5]...Me too."
+}

@@ -1,0 +1,15 @@
+charset,UTF-8
+type,shell
+name,Centipede (no streaks)
+id,100legs_nostreaks
+
+// Freeshell 「Centipede」 by 玄ノ糸 (BlackStrings) - http://anotherblack.soragoto.net/
+// Modified: converted to alpha PNG, red centipede streaks recolored to hair color.
+// Original terms in readme_original.txt (modification free, commercial use needs consent).
+craftman,BlackStrings
+craftmanw,玄ノ糸
+craftmanurl,http://anotherblack.soragoto.net/
+
+readme,readme_original.txt
+
+seriko.use_self_alpha,1

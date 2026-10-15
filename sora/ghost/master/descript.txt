@@ -1,0 +1,12 @@
+charset,UTF-8
+type,ghost
+
+name,Sora
+id,Sora
+title,A shy girl on your desktop
+sakura.name,Sora
+
+craftman,Vulture
+craftmanw,Vulture
+
+shiori,yaya.dll

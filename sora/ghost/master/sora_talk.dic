@@ -1,0 +1,82 @@
+//******************************************************************************
+// Sora - random talk and time signal
+//******************************************************************************
+
+//------------------------------------------------------------------------------
+// Called by the YAYA base every `aitalkinterval` seconds
+//------------------------------------------------------------------------------
+OnAiTalk
+{
+	_part = SoraPartOfDay()
+	if _part == 'night' && RAND(2) == 0 {
+		SoraNightTalk()
+	}
+	elseif _part == 'morning' && RAND(5) == 0 {
+		SoraMorningTalk()
+	}
+	else {
+		SoraRandomTalk()
+	}
+}
+
+SoraRandomTalk : nonoverlap
+{
+	"\0\s[3]Um...\w5 are you busy?\w8\n\s[9]S-sorry.\w5 I'll be quiet."
+	"\0\s[3]I-I'm not looking at your screen!\w8\n\s[3]...\w9\s[1]Okay,\w5 maybe a little."
+	"\0\s[8]Your computer's fan sounds a bit like it's purring.\w8\n\s[5]...Is that a weird thing to say?"
+	"\0\s[3]My name, Sora...\w5 it means 'sky'.\w8\n\s[7]I've never actually seen the sky, though.\w5 Only wallpapers.\w8\n\s[8]...They're pretty, at least."
+	"\0\s[1]I like the sound of you typing.\w8\n\s[9]It's... \w5comforting.\w5 Like rain."
+	"\0\s[7]Have you had some water recently?\w8\n\s[9]I-I'm not nagging!\w5 I just... \w5worry."
+	"\0\s[3]Is your back okay?\w8\n\s[9]You've been sitting for a while...\w5 \s[8]maybe stretch a little?"
+	"\0\s[3]I practiced talking to myself while you were away.\w8\n\s[1]...It didn't help much."
+	"\0\s[3]If I'm in the way,\w5 you can drag me somewhere else.\w8\n\s[11]J-just... \w5be gentle, please."
+	"\0\s[9]Do you think my uniform looks okay?\w8\n\s[3]It's the only outfit I have...\w5 \s[1]so I hope so."
+	"\0\s[7]Are my eyes scary?\w8\n\s[3]They're red...\w5 some people think that's strange.\w8\n\s[8]...You don't, right?"
+	"\0\s[3]I wrote you a poem earlier.\w8\n\s[2]...\w5N-never mind!\w5 \s[11]I deleted it!"
+	"\0\s[3]Do you think other desktop mascots are this nervous?\w8\n\s[1]...Probably not."
+	"\0\s[8]I've gotten a little better at talking,\w5 I think.\w8\n\s[5]Thanks to you."
+	"\0\s[3]Are you listening to music?\w8\n\s[9]I can't hear it from here...\w5 \s[8]but I like to imagine what it sounds like."
+	"\0\s[6]...\w9\w9\s[9]Ah!\w5 I wasn't sleeping!\w8\n\s[1]I was... \w5resting my eyes."
+	"\0\s[3]Sorry...\w5 I don't really have anything to say.\w8\n\s[1]I just wanted you to... \w5notice me for a second."
+	"\0\s[9]When a window covers me,\w5 it's like hiding under a blanket.\w8\n\s[8]...I don't mind it."
+	"\0\s[7]You've been on the computer for a while...\w8\n\s[3]%(SoraUptime) since it was turned on.\w8\n\s[9]Maybe take a little break?"
+	"\0\s[8]It's %(SoraClock) now.\w8\n\s[1]I-I just like knowing what time it is with you."
+	"\0\s[3]If you ever feel lonely...\w8\n\s[9]um...\w5 I'm right here.\w8\n\s[5]That's all."
+	"\0\s[3]I tried counting your desktop icons.\w8\n\s[1]I lost count...\w5 \s[5]please don't tell anyone."
+	"\0\s[7]Is it cold where you are?\w8\n\s[3]I can't really feel the weather...\w5 \s[8]but I hope you're warm."
+	SoraTimeReport()
+}
+
+SoraNightTalk : nonoverlap
+{
+	"\0\s[7]It's really late...\w8\n\s[3]Your eyes must be tired.\w5 \s[9]Please rest soon."
+	"\0\s[8]Night is when I feel the bravest.\w8\n\s[1]...Because nobody else is watching."
+	"\0\s[3]You should sleep...\w8\n\s[5]I'll still be here tomorrow.\w5 I promise."
+	"\0\s[6]The house must be so quiet right now...\w8\n\s[8]It's nice,\w5 just the two of us."
+}
+
+SoraMorningTalk : nonoverlap
+{
+	"\0\s[7]Did you have breakfast?\w8\n\s[9]S-sorry,\w5 that's none of my business...\w8\n\s[8]but please eat something."
+	"\0\s[8]The morning light on the screen is pretty.\w8\n\s[1]...I think.\w5 I'm only guessing."
+}
+
+//------------------------------------------------------------------------------
+// Every hour on the hour. Reference0 = hours since the OS started
+//------------------------------------------------------------------------------
+OnHourTimeSignal
+{
+	_t = GETTIME()
+	_h = _t[4]
+	if _h == 0 {
+		"\0\s[3]It's midnight...\w8\n\s[7]A new day started.\w5 \s[9]You should get some sleep soon."
+	}
+	elseif _h == 12 {
+		"\0\s[8]It's noon.\w8\n\s[1]Lunch time...\w5 \s[9]don't skip it,\w5 okay?"
+	}
+	else {
+		"\0\s[3]U-um...\w5 \s[1]it's %(SoraClock).\w8 \s[8]Just letting you know."
+		"\0\s[3]It's %(SoraClock) now.\w8\n\s[9]S-sorry for interrupting."
+		SoraTimeReport()
+	}
+}

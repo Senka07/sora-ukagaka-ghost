@@ -1,0 +1,131 @@
+//******************************************************************************
+// Sora - helper functions
+//
+// Surface cheat sheet (shell "Centipede" by 玄ノ糸, see shell/master/surfaces.txt):
+//   0 neutral                1 blushing, lips parted     2 surprised
+//   3 glancing aside         4 eyes shut, lips parted    5 blushing smile
+//   6 eyes shut, calm        7 troubled frown            8 soft smile
+//   9 blushing, flustered   11 very embarrassed (whole face red)
+//******************************************************************************
+
+//------------------------------------------------------------------------------
+// The user's name with a leading comma (", Alex"), or empty if she doesn't know it
+//------------------------------------------------------------------------------
+SoraCallName
+{
+	if ISVAR('username') && username != '' {
+		', ' + username
+	}
+	else {
+		''
+	}
+}
+
+SoraOrdinal
+{
+	_n = TOINT(_argv[0])
+	_suffix = 'th'
+	if (_n % 100) < 11 || (_n % 100) > 13 {
+		case _n % 10 {
+			when 1 { _suffix = 'st' }
+			when 2 { _suffix = 'nd' }
+			when 3 { _suffix = 'rd' }
+		}
+	}
+	TOSTR(_n) + _suffix
+}
+
+SoraWeekday
+{
+	_names = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
+	_names[TOINT(_argv[0])]
+}
+
+SoraMonth
+{
+	_names = ('January', 'February', 'March', 'April', 'May', 'June', /
+		'July', 'August', 'September', 'October', 'November', 'December')
+	_names[TOINT(_argv[0]) - 1]
+}
+
+//------------------------------------------------------------------------------
+// "10:39 PM"
+//------------------------------------------------------------------------------
+SoraClock
+{
+	_t = GETTIME()
+	_h = _t[4]
+	_ampm = 'AM'
+	if _h >= 12 {
+		_ampm = 'PM'
+	}
+	_h12 = _h % 12
+	if _h12 == 0 {
+		_h12 = 12
+	}
+	_m = TOSTR(_t[5])
+	if _t[5] < 10 {
+		_m = '0' + _m
+	}
+	TOSTR(_h12) + ':' + _m + ' ' + _ampm
+}
+
+//------------------------------------------------------------------------------
+// "Saturday, March 21st"
+//------------------------------------------------------------------------------
+SoraDate
+{
+	_t = GETTIME()
+	SoraWeekday(_t[3]) + ', ' + SoraMonth(_t[1]) + ' ' + SoraOrdinal(_t[2])
+}
+
+//------------------------------------------------------------------------------
+// How long the computer has been on: "0 days, 6 hours and 11 minutes"
+//------------------------------------------------------------------------------
+SoraUptime
+{
+	_min = GETTICKCOUNT() / 60000
+	_d = _min / 1440
+	_h = (_min % 1440) / 60
+	_m = _min % 60
+	SoraPlural(_d, 'day') + ', ' + SoraPlural(_h, 'hour') + ' and ' + SoraPlural(_m, 'minute')
+}
+
+SoraPlural
+{
+	if _argv[0] == 1 {
+		'1 ' + _argv[1]
+	}
+	else {
+		TOSTR(_argv[0]) + ' ' + _argv[1] + 's'
+	}
+}
+
+//------------------------------------------------------------------------------
+// morning / afternoon / evening / night
+//------------------------------------------------------------------------------
+SoraPartOfDay
+{
+	_t = GETTIME()
+	_h = _t[4]
+	if _h >= 5 && _h < 12 {
+		'morning'
+	}
+	elseif _h >= 12 && _h < 18 {
+		'afternoon'
+	}
+	elseif _h >= 18 && _h < 23 {
+		'evening'
+	}
+	else {
+		'night'
+	}
+}
+
+//------------------------------------------------------------------------------
+// The talk from the original screenshot: date, time and how long the PC is on
+//------------------------------------------------------------------------------
+SoraTimeReport
+{
+	"\0\s[3]U-um...\w8 \s[1]today is %(SoraDate),\w4 and it's %(SoraClock).\w8\n\n\s[9]Your computer has been running for %(SoraUptime).\w8\n\s[8]...I've been keeping count."
+}

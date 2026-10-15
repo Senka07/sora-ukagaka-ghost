@@ -1,0 +1,82 @@
+//******************************************************************************
+// Sora - double-click menu
+//******************************************************************************
+
+OnSoraMenu
+{
+	_greet = ANY(( /
+		"\0\s[1]Y-yes?\w5 Did you need something?", /
+		"\0\s[9]Oh!\w5 \s[9]Um...\w5 what is it%(SoraCallName)?", /
+		"\0\s[8]I'm listening." /
+	))
+	_greet + "\n\n" + /
+		"\q[What time is it?,menu_time]\n" + /
+		"\q[Talk to me,menu_talk]\n" + /
+		"\q[How often you talk,menu_freq]\n" + /
+		"\q[Call me something else,menu_name]\n" + /
+		"\n\q[Never mind,menu_cancel]"
+}
+
+//------------------------------------------------------------------------------
+// Reference0 = choice ID
+//------------------------------------------------------------------------------
+OnChoiceSelect
+{
+	case reference[0] {
+		when 'menu_time' {
+			SoraTimeReport()
+		}
+		when 'menu_talk' {
+			SoraRandomTalk()
+		}
+		when 'menu_freq' {
+			SoraFreqMenu()
+		}
+		when 'menu_name' {
+			"\0\s[3]What should I call you?\w5\![open,inputbox,OnSoraName,-1]"
+		}
+		when 'menu_cancel' {
+			"\0\s[3]O-okay.\w5 \s[8]I'm here if you need me."
+		}
+		when 'freq_60' {
+			aitalkinterval = 60
+			"\0\s[9]More often?\w8 \s[5]...O-okay!\w5 I'll do my best."
+		}
+		when 'freq_180' {
+			aitalkinterval = 180
+			"\0\s[8]Every few minutes,\w5 then.\w8 \s[1]Like usual."
+		}
+		when 'freq_600' {
+			aitalkinterval = 600
+			"\0\s[3]I'll be quieter...\w8 \s[9]Just tell me if you miss me."
+		}
+		when 'freq_0' {
+			aitalkinterval = 0
+			"\0\s[1]O-oh...\w5 \s[3]I'll stay quiet,\w5 then.\w8\n\s[8]Double-click me if you want to talk."
+		}
+	}
+}
+
+SoraFreqMenu
+{
+	_now = 'every few minutes'
+	if aitalkinterval == 60 {
+		_now = 'every minute'
+	}
+	elseif aitalkinterval == 600 {
+		_now = 'every ten minutes'
+	}
+	elseif aitalkinterval == 0 {
+		_now = 'never'
+	}
+	"\0\s[3]Right now I talk %(_now)...\w5 \s[9]is that too much?\n\n" + /
+		"\q[Every minute,freq_60]\n" + /
+		"\q[Every few minutes,freq_180]\n" + /
+		"\q[Every ten minutes,freq_600]\n" + /
+		"\q[Please be quiet,freq_0]"
+}
+
+OnChoiceTimeout
+{
+	"\0\s[3]...\w5Oh,\w5 \s[1]never mind,\w5 then."
+}

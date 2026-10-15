@@ -1,0 +1,93 @@
+//******************************************************************************
+// Sora - boot, close and name events
+//******************************************************************************
+
+OnFirstBoot
+{
+	bootcount = 1
+	username = ''
+	"\0\s[3]...\w9\w9\s[9]O-oh!\w5 It's on...\w8 \s[1]h-hello.\w9\n\n\s[9]I'm Sora.\w5 I'll be... \w5um... \w5staying on your desktop from now on.\w8\n\s[1]If that's okay with you, I mean.\w9\n\n\s[3]Could I... \w5ask what I should call you?\w5\![open,inputbox,OnSoraName,-1]"
+}
+
+OnBoot
+{
+	bootcount = TOINT(bootcount) + 1
+	_talk = SoraBootGreeting()
+	if bootcount == 10 || bootcount == 50 || bootcount == 100 {
+		_talk += "\w9\n\n\s[1]Um...\w5 this is the %(SoraOrdinal(bootcount)) time you've opened me.\w8\n\s[5]...Thank you."
+	}
+	_talk
+}
+
+SoraBootGreeting
+{
+	_part = SoraPartOfDay()
+	if _part == 'morning' {
+		"\0\s[3]Ah...\w5 \s[1]good morning%(SoraCallName).\w8\n\s[8]Did you sleep well?"
+		"\0\s[6]*yawn*...\w8 \s[9]Oh! \w5S-sorry.\w5 \s[1]Good morning%(SoraCallName)."
+		"\0\s[3]Morning already...\w8 \s[8]I'm glad you turned me on first thing."
+	}
+	elseif _part == 'afternoon' {
+		"\0\s[1]Good afternoon%(SoraCallName).\w8\n\s[9]I was... \w5kind of waiting for you."
+		"\0\s[3]Oh,\w5 it's you.\w8 \s[8]Good afternoon%(SoraCallName)."
+		"\0\s[3]H-hello again.\w8 \s[5]...It's nice to see you."
+	}
+	elseif _part == 'evening' {
+		"\0\s[1]Good evening%(SoraCallName).\w8\n\s[8]Long day?"
+		"\0\s[3]Welcome back%(SoraCallName).\w8\n\s[9]I-I'll try not to be a bother tonight."
+		"\0\s[3]Ah,\w5 good evening.\w8 \s[5]I like the evenings.\w5 It's quieter."
+	}
+	else {
+		"\0\s[9]Eh?\w5 \s[1]It's so late...\w8\n\s[9]Good evening%(SoraCallName).\w5 Please don't stay up too long."
+		"\0\s[3]You're up late too...\w8 \s[8]I'll keep you company,\w5 then."
+	}
+}
+
+OnClose
+{
+	"\0\s[3]Oh...\w5 you're leaving?\w8\n\s[1]Then...\w5 goodnight%(SoraCallName).\w9\w9\-"
+	"\0\s[9]S-see you later.\w8\n\s[8]I'll be here when you come back.\w9\w9\-"
+	"\0\s[6]Okay...\w5 take care%(SoraCallName).\w9\w9\-"
+}
+
+OnGhostChanging
+{
+	"\0\s[7]Oh...\w5 \s[3]someone else?\w8\n\s[8]That's okay.\w5 I'll wait.\w9"
+}
+
+OnGhostChanged
+{
+	"\0\s[9]Ah!\w5 \s[1]I-I'm back.\w8\n\s[5]...Hello again%(SoraCallName)."
+}
+
+OnSurfaceRestore
+{
+	"\0\s[0]"
+}
+
+//------------------------------------------------------------------------------
+// Name input (\![open,inputbox,OnSoraName,...]); Reference0 = typed text
+//------------------------------------------------------------------------------
+OnSoraName
+{
+	_name = RE_REPLACE(reference[0], '^\s+|\s+$', '')
+	if _name == '' || _name == 'timeout' {
+		SoraNameSkipped
+	}
+	else {
+		username = _name
+		"\0\s[1]%(username)...\w8 \s[5]%(username).\w8\n\s[9]O-okay.\w5 I'll remember that.\w8\n\n\s[8]If you need me,\w5 just double-click me."
+	}
+}
+
+OnUserInputCancel
+{
+	if reference[0] == 'OnSoraName' {
+		SoraNameSkipped
+	}
+}
+
+SoraNameSkipped
+{
+	"\0\s[3]Oh...\w5 that's okay.\w5 \s[9]You don't have to tell me.\w8\n\n\s[8]If you need me,\w5 just double-click me."
+}
